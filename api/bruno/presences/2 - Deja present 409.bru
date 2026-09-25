@@ -1,0 +1,27 @@
+meta {
+  name: 2 - Déjà présent 409
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/presences
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "code": "{{code}}",
+    "etudiantId": {{etudiantId}}
+  }
+}
+
+assert {
+  res.status: eq 409
+  res.body.code: eq DEJA_PRESENT
+}
+
+docs {
+  RG5 : même requête que la précédente, rejouée une seconde fois.
+}

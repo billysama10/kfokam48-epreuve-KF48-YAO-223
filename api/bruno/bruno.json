@@ -1,0 +1,6 @@
+{
+  "version": "1",
+  "name": "KF48 Présences et Relectures",
+  "type": "collection",
+  "ignore": ["node_modules", ".git"]
+}

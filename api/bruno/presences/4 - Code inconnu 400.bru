@@ -1,0 +1,27 @@
+meta {
+  name: 4 - Code inconnu 400
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/api/presences
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "code": "ZZZZZZ",
+    "etudiantId": {{etudiantId}}
+  }
+}
+
+assert {
+  res.status: eq 400
+  res.body.code: eq CODE_INCONNU
+}
+
+docs {
+  Aucun code généré ne contient de Z répétés six fois : ZZZZZZ n'existe pas.
+}

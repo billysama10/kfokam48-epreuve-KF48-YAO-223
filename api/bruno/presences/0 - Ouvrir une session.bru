@@ -1,0 +1,31 @@
+meta {
+  name: 0 - Ouvrir une session
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/sessions
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "titre": "Session de test Bruno",
+    "promotionId": {{promotionId}}
+  }
+}
+
+script:post-response {
+  // Le code reçu est réutilisé par les requêtes suivantes
+  bru.setVar("code", res.body.code);
+}
+
+assert {
+  res.status: eq 201
+}
+
+docs {
+  EF2, RG1 : ouvre une session et mémorise son code dans la variable code.
+}
