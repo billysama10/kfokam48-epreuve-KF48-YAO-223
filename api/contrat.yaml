@@ -21,6 +21,12 @@ info:
       - une relecture rendue sur une session clôturée reçoit 409 SESSION_CLOTUREE (RG16) ;
       - un identifiant de relecture inconnu reçoit 404 RELECTURE_INCONNUE.
 
+    Changement de besoin de l'étape 3 (issues #28 et #29) : chaque exercice est relu
+    par deux pairs différents. La note d'un exercice est la moyenne de ses relectures
+    rendues ; elle est provisoire tant qu'une seule des deux est rendue. Seul ajout à
+    une opération imposée : le champ moyenneProvisoire de GET /api/tableau, les champs
+    existants étant inchangés.
+
     Précisions sur les autres opérations imposées :
       - champ manquant ou JSON illisible : 400 REQUETE_INVALIDE ;
       - identifiant inconnu dans un corps : 400 SESSION_INCONNUE ou ETUDIANT_INCONNU ;
@@ -179,6 +185,12 @@ paths:
                     presences: { type: integer }
                     exercicesDeposes: { type: integer }
                     moyenne: { type: number, nullable: true }
+                    moyenneProvisoire:
+                      type: boolean
+                      description: |
+                        Ajout de l'étape 3 (#29) : vrai si la moyenne contient au moins une note
+                        d'exercice provisoire (une seule des deux relectures rendue). Faux si
+                        moyenne est null.
                     relecturesEnAttente: { type: integer }
         "404": { $ref: "#/components/responses/Erreur" }   # PROMOTION_INCONNUE
 
@@ -446,15 +458,19 @@ components:
 
     ExerciceEtudiant:
       type: object
-      required: [id, sessionId, sessionTitre, lien, statut, note, commentaire]
+      required: [id, sessionId, sessionTitre, lien, statut, note, noteProvisoire, commentaires]
       properties:
         id: { type: integer, format: int64 }
         sessionId: { type: integer, format: int64 }
         sessionTitre: { type: string }
         lien: { type: string, format: uri }
         statut: { $ref: "#/components/schemas/StatutExercice" }
-        note: { type: integer, minimum: 0, maximum: 20, nullable: true, description: "null tant que non relu" }
-        commentaire: { type: string, nullable: true }
+        note: { type: number, minimum: 0, maximum: 20, nullable: true, description: "moyenne des relectures rendues, null si aucune (#29)" }
+        noteProvisoire: { type: boolean, description: "vrai si une seule des deux relectures est rendue (#29)" }
+        commentaires:
+          type: array
+          description: commentaires des relectures rendues, sans le nom des relecteurs (RG17)
+          items: { type: string }
 
     Erreur:
       type: object
