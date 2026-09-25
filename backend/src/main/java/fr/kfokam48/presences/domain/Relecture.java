@@ -45,6 +45,14 @@ public class Relecture {
         return rendueAt != null;
     }
 
+    /** EF7 : la relecture rendue est définitive (RG11) et l'exercice passe à RELU (D4). */
+    public void rendre(int note, String commentaire, LocalDateTime maintenant) {
+        this.note = note;
+        this.commentaire = commentaire;
+        this.rendueAt = maintenant;
+        exercice.changerStatut(StatutExercice.RELU);
+    }
+
     public Long getId() { return id; }
     public Exercice getExercice() { return exercice; }
     public Etudiant getRelecteur() { return relecteur; }
