@@ -61,5 +61,5 @@ flowchart LR
 |---|---|---|
 | Formateur | EF2, EF8, EF9, EF10, EF12 | Pas de compte, formateur unique (Q1) |
 | Étudiant | EF1, EF3, EF4, EF11, EF13 | Identité choisie dans une liste, sans mot de passe (Q1) |
-| Relecteur | EF6, EF7 (et tout ce que fait un étudiant) | Rôle porté par l'entité `relecture` (colonne `relecteur_id`), voir D2 |
+| Relecteur | EF6, EF7 (et tout ce que fait un étudiant) | Rôle porté par l'entité **relecture** (colonne **relecteur_id**), voir D2 |
 | Système | EF5, EF14 | Le tirage est déclenché par un dépôt (EF4) ou par toute nouvelle présence (EF3, EF9) quand des exercices attendent un relecteur (RG10) |
