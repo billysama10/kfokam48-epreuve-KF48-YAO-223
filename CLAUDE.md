@@ -9,7 +9,7 @@ Le candidat n'est pas développeur : explique en 3 lignes max ce que tu fais, en
 - Jalons exacts : `git commit --allow-empty -m "[JALON] analyse"`, puis `[JALON] v0.1`, puis `[JALON] v1.0`, poussés.
 
 ## Règles Git NON négociables
-- Jamais de commit direct de code sur main. Une branche par issue : `feat/<num>-<slug>` ou `fix/<num>-<slug>`.
+- Jamais de commit direct de code sur main. Une branche par issue : `feature/<num>-<slug>` ou `fix/<num>-<slug>`.
 - Une PR par branche via `gh pr create`, corps contenant `Closes #<num>`, puis `gh pr merge --merge --delete-branch`.
 - Jamais `push --force` sur ce dépôt. Jamais commiter target/, node_modules/, dist/, build/, .env, secrets.
 - Push après chaque commit.
@@ -25,3 +25,10 @@ Le candidat n'est pas développeur : explique en 3 lignes max ce que tu fais, en
 
 ## Journal
 Après chaque étape, ajoute une entrée dans docs/JOURNAL.md (Fait / Bloqué + durée / IA + vérification) et commite-la immédiatement.
+
+## Mise à jour du sujet (11h52)
+- 5 étapes (l'épreuve Git est supprimée ; « Soumettre » devient l'étape 5). Un seul dépôt.
+- Issues : une dizaine, titre = résultat utilisateur (pas tâche technique), critères « quand… alors… », priorité, renvoi EFx/RGx, estimation.
+- Commit qui ferme : ex. `Enregistrement d'une présence par code (RG1) — Closes #4`.
+- Barème Git 30 : commits atomiques 8, branche+PR par issue 7, jalons 5, .gitignore 5, main sain/aucun secret 5. Produit 17.
+- L'enveloppe (étape 3) est remise par le surveillant après `[JALON] v0.1` poussé.
