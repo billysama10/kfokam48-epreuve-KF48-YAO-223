@@ -50,6 +50,13 @@ td {
   color: #1b5e20;
 }
 
+.relecture {
+  border: 1px solid #ccc;
+  padding: 0.5rem 1rem;
+  margin-bottom: 0.5rem;
+  overflow-wrap: anywhere;
+}
+
 .code {
   font-size: 2rem;
   letter-spacing: 0.2em;

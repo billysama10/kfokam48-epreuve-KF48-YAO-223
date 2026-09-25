@@ -23,4 +23,15 @@ export type StatutExercice = 'DEPOSE' | 'EN_ATTENTE_RELECTURE' | 'RELU'
 
 export type Exercice = { id: number; statut: StatutExercice }
 
-export type Presence ={ id: number; sessionId: number; etudiantId: number; source: 'ETUDIANT' | 'FORMATEUR' }
+export type Presence = { id: number; sessionId: number; etudiantId: number; source: 'ETUDIANT' | 'FORMATEUR' }
+
+export type RelectureAttribuee = {
+  id: number
+  exerciceId: number
+  sessionId: number
+  sessionTitre: string
+  lien: string
+  rendue: boolean
+  note: number | null
+  commentaire: string | null
+}
