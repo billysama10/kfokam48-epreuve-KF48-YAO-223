@@ -35,3 +35,13 @@ export type RelectureAttribuee = {
   note: number | null
   commentaire: string | null
 }
+
+/** Ligne de GET /api/tableau : la moyenne est calculée par l'API (F3), null sans note. */
+export type LigneTableau = {
+  etudiantId: number
+  nom: string
+  presences: number
+  exercicesDeposes: number
+  moyenne: number | null
+  relecturesEnAttente: number
+}

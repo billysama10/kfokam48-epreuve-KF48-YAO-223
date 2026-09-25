@@ -5,8 +5,9 @@ import { ouvrirSession } from '../api/sessions'
 import type { Promotion, SessionOuverte } from '../api/types'
 import { MessageErreur } from '../composants/Etat'
 import { heure } from '../composants/Heure'
+import { Tableau } from './Tableau'
 
-/** Écran formateur (F2) : ouvrir une session et obtenir le code de présence (EF2). */
+/** Écran formateur (F2) : ouvrir une session (EF2) et voir le tableau de la promotion (EF8). */
 export function EcranFormateur({ promotion }: { promotion: Promotion | undefined }) {
   const [titre, setTitre] = useState('')
   const [envoi, setEnvoi] = useState(false)
@@ -50,6 +51,7 @@ export function EcranFormateur({ promotion }: { promotion: Promotion | undefined
           </p>
         </div>
       )}
+      <Tableau key={session?.id ?? 0} promotion={promotion} />
     </div>
   )
 }
