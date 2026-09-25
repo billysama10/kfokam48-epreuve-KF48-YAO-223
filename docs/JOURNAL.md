@@ -52,3 +52,15 @@
 **Ce que j'ai sorti du périmètre pour absorber le changement, et pourquoi :** toutes les EF **Should** et **Could** (EF9 à EF14, issues #9 à #14) sont **reportées après v1.0** et étiquetées « Reporté » sur GitHub. Le bug et le changement du client sont Must, et le temps restant sert à livrer la v1.0 et la soumission avant 18h. Le sacrifice le plus coûteux est la présence ajoutée à la main (#9) : il faut désormais trois présents pour qu'un exercice ait ses deux relecteurs ; un exercice incomplet reste « en attente » au tableau. Viennent ensuite la clôture (#10), sans laquelle une session n'est jamais figée, puis le confort (#11 à #14). Ordre de reprise s'il reste du temps : #9, puis #10.
 
 **IA :** elle a diagnostiqué la cause du bug en lisant le code, puis proposé le plan (issue, test rouge seul, correctif, évolution sur deux branches), que j'ai validé. J'ai tranché deux décisions : pas d'effet rétroactif (une note déjà rendue avec un seul relecteur reste définitive) et le report des Should/Could. Vérification : le test concurrent échoue avant le correctif et passe après (trois exécutions) ; **MigrationV3Test** applique V1, V2 puis V3 et retrouve les 4 relectures de démonstration (notes 15 et 12) ; 41 tests verts avec **./mvnw clean verify** ; contrat validé par le validateur OpenAPI ; diagrammes validés par l'analyseur Mermaid ; parcours réel sur des ports de test : après la note de Boris (14), tableau « 14.5/20 (provisoire) », après celle de Carine (17), « 15.25/20 » définitive.
+
+---
+
+## Étape 4 — Version finale
+
+**Fait :** **CHANGELOG.md** avec les sections v1.0 et v0.1 (Corrigé, Modifié, Ajouté, Reporté), chaque ligne citant son issue et sa PR (issue #33, PR #36) ; README final : prérequis, démarrage en trois commandes, justification de React, données de démonstration (qui est qui), tests, écarts et fonctionnalités reportées (issue #34, PR #35) ; backlog trié : les six issues ouvertes (#9 à #14) ont leur priorité (**Should** ou **Could**) et l'étiquette **Reporté** ; jalon **[JALON] v1.0** posé juste après cette entrée.
+
+**Bloqué :** environ 20 min au total pour l'étape (de 16h10 à 16h30), dont :
+- la version de Node demandée pour le README (18 et plus) était trop basse : Vite 8 exige **Node.js 20.19** ou plus récent (ou 22.12 et plus), vérifié dans ses dépendances ; c'est la version écrite dans le README ;
+- le test depuis un clone vierge devait éviter le port 8080, occupé par mon propre backend : clone dans un dossier temporaire, backend sur 18080 et frontend sur 5174, puis dossier supprimé.
+
+**IA :** elle a rédigé le CHANGELOG à partir de la liste des PR fusionnées (gh pr list) et le README à partir du code et des données de démonstration. Vérification : chaque numéro d'issue et de PR du CHANGELOG comparé à GitHub, et le numéro de la PR du CHANGELOG contrôlé à sa création ; README suivi à la lettre depuis un clone vierge : Flyway applique V1, V2 puis V3, les trois onglets s'affichent, le tableau correspond exactement à la table « qui est qui » du README, et **./mvnw test** passe dans le clone (41 tests).
