@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import type { Etudiant, Promotion } from './api/types'
+import { SelecteurIdentite } from './composants/SelecteurIdentite'
 
 type Onglet = 'formateur' | 'etudiant' | 'relecteur'
 
@@ -10,10 +12,18 @@ const ONGLETS: { id: Onglet; libelle: string }[] = [
 
 function App() {
   const [onglet, setOnglet] = useState<Onglet>('formateur')
+  const [promotion, setPromotion] = useState<Promotion>()
+  const [etudiant, setEtudiant] = useState<Etudiant>()
 
   return (
     <main>
       <h1>KF48 Présences et Relectures</h1>
+      <SelecteurIdentite
+        promotion={promotion}
+        etudiant={etudiant}
+        onPromotion={setPromotion}
+        onEtudiant={setEtudiant}
+      />
       <nav>
         {ONGLETS.map((o) => (
           <button key={o.id} className={o.id === onglet ? 'actif' : ''} onClick={() => setOnglet(o.id)}>
@@ -23,8 +33,9 @@ function App() {
       </nav>
       <section>
         {onglet === 'formateur' && <p>Écran formateur : ouvrir une session, voir le tableau.</p>}
-        {onglet === 'etudiant' && <p>Écran étudiant : marquer sa présence, déposer son exercice.</p>}
-        {onglet === 'relecteur' && <p>Écran relecteur : faire une relecture.</p>}
+        {onglet !== 'formateur' && !etudiant && <p>Choisissez d'abord votre nom dans la liste ci-dessus.</p>}
+        {onglet === 'etudiant' && etudiant && <p>Bonjour {etudiant.nom}. Marquer sa présence, déposer son exercice.</p>}
+        {onglet === 'relecteur' && etudiant && <p>Bonjour {etudiant.nom}. Vos relectures à faire.</p>}
       </section>
     </main>
   )
