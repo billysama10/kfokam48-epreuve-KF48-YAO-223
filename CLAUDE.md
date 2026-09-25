@@ -32,3 +32,7 @@ Après chaque étape, ajoute une entrée dans docs/JOURNAL.md (Fait / Bloqué + 
 - Commit qui ferme : ex. `Enregistrement d'une présence par code (RG1) — Closes #4`.
 - Barème Git 30 : commits atomiques 8, branche+PR par issue 7, jalons 5, .gitignore 5, main sain/aucun secret 5. Produit 17.
 - L'enveloppe (étape 3) est remise par le surveillant après `[JALON] v0.1` poussé.
+
+## Règles de rédaction (ajoutées à l'étape 1)
+- Ne jamais ajouter de ligne Co-Authored-By ni de mention de Claude dans les commits et les PR.
+- Dans les documents (docs/, README, issues) : pas de code en ligne avec accents graves dans le texte. Écrire en texte simple et mettre en **gras** les mots importants (codes HTTP, codes d'erreur, noms de champs). Les blocs de code restent autorisés uniquement pour les diagrammes Mermaid et les commandes.
