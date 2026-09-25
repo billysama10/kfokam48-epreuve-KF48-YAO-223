@@ -1,0 +1,27 @@
+meta {
+  name: 3 - Code expiré 410
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/presences
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "code": "DEMO01",
+    "etudiantId": {{etudiantId}}
+  }
+}
+
+assert {
+  res.status: eq 410
+  res.body.code: eq CODE_EXPIRE
+}
+
+docs {
+  RG1, RG4 : DEMO01 est le code de la session de démonstration, expiré depuis le 24/09/2026 à 09h15.
+}

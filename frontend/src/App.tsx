@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { Etudiant, Promotion } from './api/types'
 import { SelecteurIdentite } from './composants/SelecteurIdentite'
+import { EcranEtudiant } from './ecrans/EcranEtudiant'
 import { EcranFormateur } from './ecrans/EcranFormateur'
 
 type Onglet = 'formateur' | 'etudiant' | 'relecteur'
@@ -35,7 +36,7 @@ function App() {
       <section>
         {onglet === 'formateur' && <EcranFormateur promotion={promotion} />}
         {onglet !== 'formateur' && !etudiant && <p>Choisissez d'abord votre nom dans la liste ci-dessus.</p>}
-        {onglet === 'etudiant' && etudiant && <p>Bonjour {etudiant.nom}. Marquer sa présence, déposer son exercice.</p>}
+        {onglet === 'etudiant' && etudiant && <EcranEtudiant etudiant={etudiant} />}
         {onglet === 'relecteur' && etudiant && <p>Bonjour {etudiant.nom}. Vos relectures à faire.</p>}
       </section>
     </main>
