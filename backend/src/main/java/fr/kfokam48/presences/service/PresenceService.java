@@ -45,7 +45,8 @@ public class PresenceService {
     @Transactional
     public PresenceDto marquer(MarquerPresenceRequete requete) {
         String code = requete.code().trim().toUpperCase(Locale.ROOT);
-        SessionCours session = sessions.findByCode(code)
+        // Bug #26 : la session est verrouillée jusqu'à la fin de la transaction
+        SessionCours session = sessions.verrouillerParCode(code)
                 .orElseThrow(() -> ApiException.requeteInvalide("CODE_INCONNU", "Code de présence inconnu."));
 
         LocalDateTime maintenant = LocalDateTime.now(horloge);

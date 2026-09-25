@@ -55,7 +55,7 @@ class PresenceServiceTest {
         etudiant = new Etudiant("Awa", promotion);
         ReflectionTestUtils.setField(etudiant, "id", 100L);
 
-        when(sessions.findByCode("ABC234")).thenReturn(Optional.of(session));
+        when(sessions.verrouillerParCode("ABC234")).thenReturn(Optional.of(session));
         when(etudiants.findById(100L)).thenReturn(Optional.of(etudiant));
         when(presences.save(any(Presence.class))).thenAnswer(i -> i.getArgument(0));
     }
