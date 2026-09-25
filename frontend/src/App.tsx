@@ -3,6 +3,7 @@ import type { Etudiant, Promotion } from './api/types'
 import { SelecteurIdentite } from './composants/SelecteurIdentite'
 import { EcranEtudiant } from './ecrans/EcranEtudiant'
 import { EcranFormateur } from './ecrans/EcranFormateur'
+import { EcranRelecteur } from './ecrans/EcranRelecteur'
 
 type Onglet = 'formateur' | 'etudiant' | 'relecteur'
 
@@ -37,7 +38,7 @@ function App() {
         {onglet === 'formateur' && <EcranFormateur promotion={promotion} />}
         {onglet !== 'formateur' && !etudiant && <p>Choisissez d'abord votre nom dans la liste ci-dessus.</p>}
         {onglet === 'etudiant' && etudiant && <EcranEtudiant etudiant={etudiant} />}
-        {onglet === 'relecteur' && etudiant && <p>Bonjour {etudiant.nom}. Vos relectures à faire.</p>}
+        {onglet === 'relecteur' && etudiant && <EcranRelecteur etudiant={etudiant} />}
       </section>
     </main>
   )
