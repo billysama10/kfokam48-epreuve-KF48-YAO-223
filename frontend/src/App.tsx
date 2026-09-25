@@ -32,13 +32,14 @@ function App() {
         onEtudiant={setEtudiant}
       />
       <Onglets onglets={ONGLETS} actif={onglet} onChange={setOnglet} />
+      {/* key : un changement de nom repart d'un écran vierge, sans les messages du précédent */}
       <main id="panneau" role="tabpanel" aria-labelledby={`onglet-${onglet}`}>
         {onglet === 'formateur' && <EcranFormateur promotion={promotion} />}
         {onglet !== 'formateur' && !etudiant && (
           <EtatVide>Choisissez d'abord votre nom dans la liste « Je suis » ci-dessus.</EtatVide>
         )}
-        {onglet === 'etudiant' && etudiant && <EcranEtudiant etudiant={etudiant} />}
-        {onglet === 'relecteur' && etudiant && <EcranRelecteur etudiant={etudiant} />}
+        {onglet === 'etudiant' && etudiant && <EcranEtudiant key={etudiant.id} etudiant={etudiant} />}
+        {onglet === 'relecteur' && etudiant && <EcranRelecteur key={etudiant.id} etudiant={etudiant} />}
       </main>
     </div>
   )
