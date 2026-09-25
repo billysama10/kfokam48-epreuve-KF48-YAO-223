@@ -49,3 +49,8 @@ td {
 .succes {
   color: #1b5e20;
 }
+
+.code {
+  font-size: 2rem;
+  letter-spacing: 0.2em;
+}
