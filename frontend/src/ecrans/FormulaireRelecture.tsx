@@ -49,7 +49,7 @@ export function FormulaireRelecture({ relecture, relecteurId, onRendue }: Props)
       </label>
       <br />
       <button type="submit" disabled={envoi}>
-        {envoi ? 'Envoi…' : 'Rendre la relecture (définitif)'}
+        {envoi ? 'Envoi…' : 'Rendre ma relecture (définitif)'}
       </button>
       <MessageErreur erreur={erreur} />
     </form>

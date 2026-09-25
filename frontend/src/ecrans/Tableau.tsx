@@ -3,7 +3,10 @@ import type { Promotion } from '../api/types'
 import { useAppel } from '../api/useAppel'
 import { Chargement, MessageErreur } from '../composants/Etat'
 
-/** EF8 : tableau du formateur. La moyenne est affichée telle que l'API la renvoie (F3, RG18). */
+/**
+ * EF8, EF15 : tableau du formateur. La moyenne et son caractère provisoire sont affichés
+ * tels que l'API les renvoie (F3, RG18, RG23), sans aucun recalcul.
+ */
 export function Tableau({ promotion }: { promotion: Promotion }) {
   const tableau = useAppel(() => chargerTableau(promotion.id), [promotion.id])
 
@@ -32,7 +35,10 @@ export function Tableau({ promotion }: { promotion: Promotion }) {
                 <td>{l.nom}</td>
                 <td>{l.presences}</td>
                 <td>{l.exercicesDeposes}</td>
-                <td>{l.moyenne === null ? '—' : `${l.moyenne}/20`}</td>
+                <td>
+                  {l.moyenne === null ? '—' : `${l.moyenne}/20`}
+                  {l.moyenneProvisoire && <em className="attente"> (provisoire)</em>}
+                </td>
                 <td className={l.relecturesEnAttente > 0 ? 'attente' : ''}>{l.relecturesEnAttente}</td>
               </tr>
             ))}
