@@ -10,7 +10,12 @@ Analyse complète : [cahier des charges](docs/CAHIER_DES_CHARGES.md), [diagramme
 
 ## Prérequis
 
-- **Java 21** (la variable JAVA_HOME doit pointer vers un JDK 21)
+- **Java 21 obligatoire** : la variable **JAVA_HOME** doit pointer vers un JDK 21, sinon mvnw refuse de compiler. Si un autre JDK est installé, régler JAVA_HOME avant de lancer le backend, par exemple sous PowerShell :
+
+```powershell
+$env:JAVA_HOME = "C:\Program Files\Eclipse Adoptium\jdk-21.0.12.101-hotspot"
+```
+
 - **Node.js 22** ou plus récent (exigé par Vite 8)
 - Aucune base de données à installer : le backend utilise **H2** en mode fichier (dossier backend/data, créé au premier démarrage)
 
