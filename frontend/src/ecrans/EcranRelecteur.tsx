@@ -79,7 +79,9 @@ function CarteRelecture({ relecture, children }: { relecture: RelectureAttribuee
     >
       <div className="pile">
         <a className="lien-exercice" href={relecture.lien} target="_blank" rel="noreferrer">
-          <span className="lien-exercice-libelle">Exercice à relire</span>
+          <span className="lien-exercice-libelle">
+            {relecture.rendue ? 'Exercice relu' : 'Exercice à relire'}
+          </span>
           <span className="lien-exercice-url">{relecture.lien}</span>
         </a>
         {children}
