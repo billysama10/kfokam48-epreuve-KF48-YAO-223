@@ -3,7 +3,9 @@ import type { FormEvent } from 'react'
 import { ApiError } from '../api/client'
 import { marquerPresence } from '../api/presences'
 import type { Etudiant } from '../api/types'
-import { MessageErreur } from '../composants/Etat'
+import { Carte } from '../composants/Carte'
+import { Champ } from '../composants/Champ'
+import { MessageErreur, MessageSucces } from '../composants/Etat'
 
 /** EF3 : l'étudiant saisit le code donné par le formateur (utilisable sur téléphone, ENF1). */
 export function MarquerPresence({ etudiant }: { etudiant: Etudiant }) {
@@ -29,25 +31,27 @@ export function MarquerPresence({ etudiant }: { etudiant: Etudiant }) {
   }
 
   return (
-    <div>
-      <h2>Marquer ma présence</h2>
-      <form onSubmit={envoyer}>
-        <input
-          value={code}
-          onChange={(e) => setCode(e.target.value.toUpperCase())}
-          placeholder="Code de présence"
-          aria-label="Code de présence"
-          autoCapitalize="characters"
-          autoComplete="off"
-          maxLength={6}
-          required
-        />{' '}
-        <button type="submit" disabled={envoi}>
+    <Carte titre="Marquer ma présence" aide="Saisissez le code de 6 caractères affiché par le formateur.">
+      <form className="formulaire" onSubmit={envoyer}>
+        <Champ libelle="Code de présence">
+          <input
+            className="saisie-code"
+            value={code}
+            onChange={(e) => setCode(e.target.value.toUpperCase())}
+            placeholder="ABC234"
+            autoCapitalize="characters"
+            autoComplete="off"
+            spellCheck={false}
+            maxLength={6}
+            required
+          />
+        </Champ>
+        <button type="submit" className="bouton-principal" disabled={envoi}>
           {envoi ? 'Envoi…' : 'Je suis présent'}
         </button>
+        <MessageErreur erreur={erreur} />
+        {succes && <MessageSucces>Présence enregistrée.</MessageSucces>}
       </form>
-      <MessageErreur erreur={erreur} />
-      {succes && <p className="succes">Présence enregistrée.</p>}
-    </div>
+    </Carte>
   )
 }

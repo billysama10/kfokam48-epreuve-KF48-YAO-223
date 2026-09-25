@@ -3,8 +3,10 @@ import type { FormEvent } from 'react'
 import { ApiError } from '../api/client'
 import { ouvrirSession } from '../api/sessions'
 import type { Promotion, SessionOuverte } from '../api/types'
-import { MessageErreur } from '../composants/Etat'
-import { heure } from '../composants/Heure'
+import { Carte } from '../composants/Carte'
+import { Champ } from '../composants/Champ'
+import { CodeSession } from '../composants/CodeSession'
+import { EtatVide, MessageErreur } from '../composants/Etat'
 import { Tableau } from './Tableau'
 
 /** Écran formateur (F2) : ouvrir une session (EF2) et voir le tableau de la promotion (EF8). */
@@ -14,7 +16,7 @@ export function EcranFormateur({ promotion }: { promotion: Promotion | undefined
   const [erreur, setErreur] = useState<ApiError>()
   const [session, setSession] = useState<SessionOuverte>()
 
-  if (!promotion) return <p>Choisissez d'abord la promotion ci-dessus.</p>
+  if (!promotion) return <EtatVide>Choisissez d'abord la promotion ci-dessus.</EtatVide>
 
   async function ouvrir(e: FormEvent) {
     e.preventDefault()
@@ -32,25 +34,26 @@ export function EcranFormateur({ promotion }: { promotion: Promotion | undefined
   }
 
   return (
-    <div>
-      <h2>Ouvrir une session</h2>
-      <form onSubmit={ouvrir}>
-        <input value={titre} onChange={(e) => setTitre(e.target.value)} placeholder="Titre du cours" required />{' '}
-        <button type="submit" disabled={envoi}>
-          {envoi ? 'Ouverture…' : 'Ouvrir la session'}
-        </button>
-      </form>
-      <MessageErreur erreur={erreur} />
-      {session && (
-        <div className="succes">
-          <p>
-            Code de présence : <strong className="code">{session.code}</strong>
-          </p>
-          <p>
-            Valable jusqu'à {heure(session.expirationAt)} (ouverte à {heure(session.ouvertureAt)}).
-          </p>
+    <div className="pile">
+      <Carte titre="Ouvrir une session" aide="Un code de présence est créé : affichez-le pour que les étudiants le saisissent.">
+        <div className="pile">
+          <form className="formulaire" onSubmit={ouvrir}>
+            <Champ libelle="Titre du cours">
+              <input
+                value={titre}
+                onChange={(e) => setTitre(e.target.value)}
+                placeholder="Par exemple : Introduction à Spring Boot"
+                required
+              />
+            </Champ>
+            <button type="submit" className="bouton-principal" disabled={envoi}>
+              {envoi ? 'Ouverture…' : 'Ouvrir la session'}
+            </button>
+          </form>
+          <MessageErreur erreur={erreur} />
+          {session && <CodeSession session={session} />}
         </div>
-      )}
+      </Carte>
       <Tableau key={session?.id ?? 0} promotion={promotion} />
     </div>
   )
