@@ -2,6 +2,8 @@
 
 Acteurs et ce que chacun peut faire. Chaque cas renvoie à son exigence (EFx) et à ses règles (RGx) du [cahier des charges](../CAHIER_DES_CHARGES.md).
 
+Version 2 (étape 3) : **conséquence du changement de besoin double relecture** — EF5 attribue deux relecteurs, EF15 calcule la note (moyenne des deux, provisoire si une seule est rendue).
+
 Le **relecteur n'est pas un acteur distinct** : c'est un étudiant dans un rôle (section 2 du cahier des charges). Le lien « est un » le montre.
 
 ```mermaid
@@ -17,7 +19,7 @@ flowchart LR
         UC2["EF2 · Ouvrir une session et obtenir un code<br/>Must · RG1"]
         UC3["EF3 · Marquer sa présence avec un code<br/>Must · RG1 RG4 RG5 RG6 RG20"]
         UC4["EF4 · Déposer le lien de son exercice<br/>Must · RG12 RG13 RG14 RG16"]
-        UC5["EF5 · Attribuer un relecteur au hasard<br/>Must · RG2 RG8 RG9 RG10"]
+        UC5["EF5 · Attribuer deux relecteurs au hasard<br/>Must · RG2 RG8 RG9 RG10 RG22"]
         UC6["EF6 · Voir ses relectures à faire<br/>Must"]
         UC7["EF7 · Rendre une note et un commentaire<br/>Must · RG2 RG3 RG11 RG16 RG19"]
         UC8["EF8 · Consulter le tableau de la promotion<br/>Must · RG18"]
@@ -27,6 +29,7 @@ flowchart LR
         UC12["EF12 · Voir le détail d'une session<br/>Should · RG6"]
         UC13["EF13 · Voir la note reçue, sans le relecteur<br/>Could · RG17"]
         UC14["EF14 · Bloquer après cinq codes erronés<br/>Could · RG21"]
+        UC15["EF15 · Calculer la note : moyenne des deux relectures, provisoire si une seule<br/>Must · RG18 RG23"]
     end
 
     R -. "est un" .-> E
@@ -48,11 +51,13 @@ flowchart LR
 
     S --- UC5
     S --- UC14
+    S --- UC15
 
     UC4 -. "«include»" .-> UC5
     UC3 -. "«include» retentative RG10" .-> UC5
     UC9 -. "«include» retentative RG10" .-> UC5
     UC14 -. "«extend»" .-> UC3
+    UC8 -. "«include»" .-> UC15
 ```
 
 ## Lecture
@@ -62,4 +67,4 @@ flowchart LR
 | Formateur | EF2, EF8, EF9, EF10, EF12 | Pas de compte, formateur unique (Q1) |
 | Étudiant | EF1, EF3, EF4, EF11, EF13 | Identité choisie dans une liste, sans mot de passe (Q1) |
 | Relecteur | EF6, EF7 (et tout ce que fait un étudiant) | Rôle porté par l'entité **relecture** (colonne **relecteur_id**), voir D2 |
-| Système | EF5, EF14 | Le tirage est déclenché par un dépôt (EF4) ou par toute nouvelle présence (EF3, EF9) quand des exercices attendent un relecteur (RG10) |
+| Système | EF5, EF14, EF15 | Le tirage est déclenché par un dépôt (EF4) ou par toute nouvelle présence (EF3, EF9) quand des exercices attendent un relecteur (RG10) |

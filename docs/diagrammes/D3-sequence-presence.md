@@ -2,7 +2,7 @@
 
 Opération imposée **POST /api/presences** (EF3). Les codes HTTP et les codes d'erreur sont **exactement** ceux de [api/contrat.yaml](../../api/contrat.yaml) : **201**, **400 CODE_INCONNU**, **409 DEJA_PRESENT**, **410 CODE_EXPIRE**. Toute erreur passe par le **@RestControllerAdvice** et renvoie **{ "code": "...", "message": "..." }** (ENF4).
 
-Règles citées : RG1 et RG4 (expiration du code, fin de session), RG5 (une seule présence), RG6 (source **ETUDIANT**), RG9 et RG10 (retentative d'attribution d'un relecteur), RG16 (session clôturée).
+Règles citées : RG1 et RG4 (expiration du code, fin de session), RG5 (une seule présence), RG6 (source **ETUDIANT**), RG9 et RG10 (attribution complétée jusqu'à deux relecteurs, version 2 de l'étape 3), RG16 (session clôturée).
 
 ```mermaid
 sequenceDiagram
@@ -19,7 +19,7 @@ sequenceDiagram
     E->>F: saisit le code
     F->>C: POST /api/presences { code, etudiantId }
     C->>S: marquer(code, etudiantId)
-    S->>SR: findByCode(code)
+    S->>SR: verrouillerParCode(code) (verrou, bug #26)
 
     alt code inconnu
         SR-->>S: aucune session
@@ -44,7 +44,7 @@ sequenceDiagram
         PR-->>S: faux
         S->>PR: save(presence, source = ETUDIANT) (RG6)
         PR-->>S: presence
-        S->>A: attribuerExercicesEnAttente(sessionId) (RG9, RG10)
+        S->>A: attribuerEnAttente(sessionId), jusqu'à deux relecteurs (RG8, RG9, RG10)
         A-->>S: exercices DEPOSE éventuellement attribués
         S-->>C: PresenceDto
         C-->>F: 201 { id, sessionId, etudiantId, source: "ETUDIANT" }
@@ -60,6 +60,8 @@ sequenceDiagram
 | Code expiré ou session clôturée | 410 | **CODE_EXPIRE** | RG1, RG4, RG16 |
 | Déjà présent | 409 | **DEJA_PRESENT** | RG5 |
 | Cas nominal | 201 | — (corps **{ id, sessionId, etudiantId, source }**) | RG6, RG10 |
+
+**Présences simultanées (bug #26)** : la session est lue avec un verrou d'écriture ; deux étudiants qui saisissent le code au même instant sont traités l'un après l'autre, et reçoivent tous les deux **201**.
 
 **Ordre des contrôles** : le code est d'abord cherché, puis sa validité, puis l'unicité de la présence. Un étudiant déjà présent qui ressaisit un code expiré reçoit donc **410**.
 
