@@ -26,13 +26,15 @@ public class PresenceService {
     private final SessionCoursRepository sessions;
     private final EtudiantRepository etudiants;
     private final PresenceRepository presences;
+    private final AttributionService attribution;
     private final Clock horloge;
 
     public PresenceService(SessionCoursRepository sessions, EtudiantRepository etudiants,
-            PresenceRepository presences, Clock horloge) {
+            PresenceRepository presences, AttributionService attribution, Clock horloge) {
         this.sessions = sessions;
         this.etudiants = etudiants;
         this.presences = presences;
+        this.attribution = attribution;
         this.horloge = horloge;
     }
 
@@ -67,6 +69,8 @@ public class PresenceService {
 
         // RG6 : une présence marquée avec le code a la source ETUDIANT
         Presence presence = presences.save(new Presence(session, etudiant, SourcePresence.ETUDIANT, maintenant));
+        // RG10 : un nouveau présent peut relire les exercices restés sans relecteur
+        attribution.attribuerEnAttente(session.getId());
         return PresenceDto.de(presence);
     }
 }
