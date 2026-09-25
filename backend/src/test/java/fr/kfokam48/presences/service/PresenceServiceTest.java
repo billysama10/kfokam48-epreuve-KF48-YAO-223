@@ -62,7 +62,7 @@ class PresenceServiceTest {
 
     private PresenceService serviceA(LocalDateTime maintenant) {
         Clock horloge = Clock.fixed(maintenant.toInstant(ZoneOffset.UTC), ZoneOffset.UTC);
-        return new PresenceService(sessions, etudiants, presences, horloge);
+        return new PresenceService(sessions, etudiants, presences, mock(AttributionService.class), horloge);
     }
 
     @Test

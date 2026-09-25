@@ -23,13 +23,15 @@ public class ExerciceService {
     private final SessionCoursRepository sessions;
     private final EtudiantRepository etudiants;
     private final ExerciceRepository exercices;
+    private final AttributionService attribution;
     private final Clock horloge;
 
     public ExerciceService(SessionCoursRepository sessions, EtudiantRepository etudiants,
-            ExerciceRepository exercices, Clock horloge) {
+            ExerciceRepository exercices, AttributionService attribution, Clock horloge) {
         this.sessions = sessions;
         this.etudiants = etudiants;
         this.exercices = exercices;
+        this.attribution = attribution;
         this.horloge = horloge;
     }
 
@@ -62,6 +64,9 @@ public class ExerciceService {
         }
 
         Exercice exercice = new Exercice(session, etudiant, requete.lien().trim(), LocalDateTime.now(horloge));
-        return ExerciceDto.de(exercices.save(exercice));
+        exercice = exercices.save(exercice);
+        // EF5 : relecteur tiré dès le dépôt s'il existe un autre présent (RG9, RG10)
+        attribution.attribuer(exercice);
+        return ExerciceDto.de(exercice);
     }
 }
