@@ -21,6 +21,7 @@ import fr.kfokam48.presences.domain.Promotion;
 import fr.kfokam48.presences.domain.Relecture;
 import fr.kfokam48.presences.domain.SessionCours;
 import fr.kfokam48.presences.domain.SourcePresence;
+import fr.kfokam48.presences.domain.StatutExercice;
 import fr.kfokam48.presences.repository.EtudiantRepository;
 import fr.kfokam48.presences.repository.ExerciceRepository;
 import fr.kfokam48.presences.repository.PresenceRepository;
@@ -63,7 +64,8 @@ class TableauControllerTest {
         Etudiant boris = etudiants.save(new Etudiant("Boris", promotion));
         Etudiant carine = etudiants.save(new Etudiant("Carine", promotion));
 
-        // Awa reçoit 10, 11 et 11 sur trois sessions : moyenne 10,666… arrondie à 10.67
+        // Awa reçoit 10, 11 et 11 sur trois sessions, une seule relecture rendue par exercice :
+        // moyenne 10,666… arrondie à 10.67, provisoire (RG23, #29)
         int[] notes = {10, 11, 11};
         for (int i = 0; i < notes.length; i++) {
             SessionCours s = sessions.save(new SessionCours("Cours " + i, promotion, "TAB00" + i, t));
@@ -84,13 +86,43 @@ class TableauControllerTest {
                 .andExpect(jsonPath("$[0].presences").value(3))
                 .andExpect(jsonPath("$[0].exercicesDeposes").value(3))
                 .andExpect(jsonPath("$[0].moyenne").value(10.67))
+                .andExpect(jsonPath("$[0].moyenneProvisoire").value(true))
                 .andExpect(jsonPath("$[0].relecturesEnAttente").value(0))
                 .andExpect(jsonPath("$[1].nom").value("Boris"))
                 .andExpect(jsonPath("$[1]").value(org.hamcrest.Matchers.hasEntry("moyenne", null)))
+                .andExpect(jsonPath("$[1].moyenneProvisoire").value(false))
                 .andExpect(jsonPath("$[1].relecturesEnAttente").value(1))
                 .andExpect(jsonPath("$[2].nom").value("Carine"))
                 .andExpect(jsonPath("$[2].exercicesDeposes").value(1))
                 .andExpect(jsonPath("$[2]").value(org.hamcrest.Matchers.hasEntry("moyenne", null)));
+    }
+
+    @Test
+    void laNoteDUnExerciceEstLaMoyenneDeSesDeuxRelecturesEtUnRELUAncienResteDefinitif() throws Exception {
+        LocalDateTime t = LocalDateTime.now(ZoneOffset.UTC);
+        Promotion promotion = promotions.save(new Promotion("Promo 2"));
+        Etudiant awa = etudiants.save(new Etudiant("Awa", promotion));
+        Etudiant boris = etudiants.save(new Etudiant("Boris", promotion));
+        Etudiant carine = etudiants.save(new Etudiant("Carine", promotion));
+        SessionCours s1 = sessions.save(new SessionCours("Cours A", promotion, "DBL001", t));
+        SessionCours s2 = sessions.save(new SessionCours("Cours B", promotion, "DBL002", t));
+
+        // Exercice 1 d'Awa : deux relectures rendues, 14 et 17 → 15.5, RELU donc définitive
+        Exercice x1 = exercices.save(new Exercice(s1, awa, "https://github.com/awa/1", t));
+        relectures.save(new Relecture(x1, boris, t)).rendre(14, "ok", t);
+        relectures.save(new Relecture(x1, carine, t)).rendre(17, "ok", t);
+        x1.changerStatut(StatutExercice.RELU);
+        // Exercice 2 d'Awa : relu avec un seul relecteur avant le changement (RELU), note 10 définitive
+        Exercice x2 = exercices.save(new Exercice(s2, awa, "https://github.com/awa/2", t));
+        relectures.save(new Relecture(x2, boris, t)).rendre(10, "ok", t);
+        x2.changerStatut(StatutExercice.RELU);
+
+        // Moyenne d'Awa : (15.5 + 10) / 2 = 12.75, aucune note provisoire
+        mockMvc.perform(get("/api/tableau").param("promotionId", promotion.getId().toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].nom").value("Awa"))
+                .andExpect(jsonPath("$[0].moyenne").value(12.75))
+                .andExpect(jsonPath("$[0].moyenneProvisoire").value(false));
     }
 
     @Test
