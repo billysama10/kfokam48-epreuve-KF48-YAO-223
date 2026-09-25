@@ -180,35 +180,34 @@ Objectif mesurable : à la fin d'une séance, le formateur sait sans rien recomp
 - Temps : une `Clock` injectée dans les services pour rendre l'expiration testable.
 - Frontend : React + Vite + TypeScript, appels API regroupés dans `src/api/`.
 - Contrat : opérations ajoutées dans `api/contrat.yaml` et figées avant le premier commit de code : liste des promotions et des étudiants, clôture, présence manuelle, remplacement du lien, relectures d'un étudiant, détail d'une session.
-- Git : une branche par issue (`feat/` ou `fix/` suivi du numéro et d'un mot-clé, par exemple `feat/3-marquer-presence`), une PR par branche avec `Closes #3`, aucun `push --force`, `.gitignore` Java + JS déjà en place.
+- Git : une branche par issue (`feature/` ou `fix/` suivi du numéro et d'un mot-clé, par exemple `feature/3-marquer-presence`), une PR par branche, un commit qui ferme l'issue en la citant (par exemple `Enregistrement d'une présence par code (RG1) — Closes #3`), aucun `push --force`, `.gitignore` Java + JS déjà en place.
 
 ## 9. Livrables
 
 - `docs/CAHIER_DES_CHARGES.md` (ce document), tenu à jour après l'étape 3
 - `docs/JOURNAL.md`, une entrée par étape
 - `docs/diagrammes/` en Mermaid : D1 cas d'utilisation, D2 modèle de données (identique aux migrations), D3 séquence « marquer sa présence » (201, 409, 410), D4 bonus états-transitions d'un exercice
-- Backlog en issues GitHub : critères d'acceptation, priorité Must / Should / Could, renvoi aux EFx / RGx
+- Backlog d'une dizaine d'issues GitHub : titre qui décrit un résultat utilisateur, critères « quand … alors … », priorité Must / Should / Could, renvoi aux EFx / RGx, estimation
 - `api/contrat.yaml` complété et figé avant le premier commit de code
 - `/backend` : application Spring Boot, migrations Flyway, tests
 - `/frontend` : application React avec les trois écrans
 - `README.md` : démarrage en trois commandes au plus, justification du frontend, testé depuis un clone vierge
 - `CHANGELOG.md` cohérent avec l'historique
 - Les trois commits de jalon : `[JALON] analyse`, `[JALON] v0.1`, `[JALON] v1.0`
-- Second dépôt public `kfokam48-gitlab-KF48-YAO-223` (épreuve Git)
-- `SOUMISSION.md` déposé sur la plateforme avant 18h00
+- Un seul dépôt GitHub public : `kfokam48-epreuve-KF48-YAO-223`
+- `SOUMISSION.md` déposé sur la plateforme avant 18h00, avec le hash complet du commit final
 
 ## 10. Démarche prévue
 
 1. **Analyse (étape 1)** : ce cahier des charges, puis les diagrammes D1 à D3 (et D4), le contrat complété, les issues. Commits de documentation sur `main`, puis `[JALON] analyse` poussé. Aucun code avant ce jalon.
 2. **Première version (étape 2)** : **seules les EF Must sont livrées en v0.1** (EF1 à EF8). Ordre : squelette backend + migrations, sessions (EF2), présences (EF3), exercices et attribution (EF4, EF5), relectures (EF6, EF7), tableau (EF8), puis les trois écrans. Une branche et une PR par issue, puis `[JALON] v0.1` poussé.
-3. **Enveloppe (étape 3)** : ouverture du script, une issue pour le bug et une pour l'évolution avant tout code ; bug reproduit par un test ; nouvelle migration Flyway (jamais de modification d'une migration existante) ; contrat mis à jour ; re-priorisation écrite dans le journal ; correctif et évolution sur deux branches séparées ; ce document et les diagrammes corrigés dans un commit qui le dit.
+3. **Enveloppe (étape 3)** : demande de l'enveloppe au surveillant dès `[JALON] v0.1` poussé, puis une issue pour le bug et une pour l'évolution avant tout code ; bug reproduit par un test ; nouvelle migration Flyway (jamais de modification d'une migration existante) ; contrat mis à jour ; re-priorisation écrite dans le journal ; correctif et évolution sur deux branches séparées ; ce document et les diagrammes corrigés dans un commit qui le dit.
 4. **Version finale (étape 4)** : `[JALON] v1.0`, `CHANGELOG.md`, README testé depuis un clone vierge, backlog restant trié. **Les EF Should puis Could ne sont traitées que si le temps le permet, après le jalon v1.0.**
-5. **Épreuve Git (étape 5)** : dans le dépôt séparé, environ vingt minutes.
-6. **Soumission (étape 6)** : hash complets vérifiés, liens testés en navigation privée, dépôt bien avant 18h00.
+5. **Soumission (étape 5)** : dernier commit poussé, hash complet sur 40 caractères vérifié, lien du dépôt testé en navigation privée, `SOUMISSION.md` déposé bien avant 18h00.
 
-**En cas de retard :** on coupe d'abord les Could, puis les Should ; les Must, les jalons, le journal et l'épreuve Git ne sont jamais sacrifiés. La soumission passe avant toute fonctionnalité.
+**En cas de retard :** on coupe d'abord les Could, puis les Should ; les Must, les jalons et le journal ne sont jamais sacrifiés. La soumission passe avant toute fonctionnalité.
 
-**Definition of Done — un ticket est terminé quand :**
+**Definition of Done — une issue est terminée quand :**
 - tous ses critères d'acceptation sont vérifiés, et les réponses d'erreur respectent le contrat et le format `{code, message}` ;
 - le code est sur une branche dédiée, fusionnée dans `main` par une PR contenant `Closes #` suivi du numéro de l'issue ;
 - les messages de commit citent l'EFx / RGx concernée et le numéro d'issue ;
@@ -223,3 +222,4 @@ Objectif mesurable : à la fin d'une séance, le formateur sait sans rien recomp
 | Version | Quand | Ce qui a changé et pourquoi |
 |---|---|---|
 | 1 | 2026-09-25, étape 1 | Version initiale : 14 EF, 21 RG, contradiction Q10/Q15 tranchée en faveur de Q15, trou « fin de session / clôture / absent / moins de 2 présents » comblé |
+| 1.1 | 2026-09-25, étape 1 | Alignement sur le sujet mis à jour (11h52) : démarche en 5 étapes (épreuve Git supprimée, soumission en étape 5), un seul dépôt, « ticket » remplacé par « issue », branches `feature/`, enveloppe remise par le surveillant, issues avec estimation |
