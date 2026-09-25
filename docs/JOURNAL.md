@@ -32,3 +32,23 @@
 - docker compose écrit mais non testé : le démon Docker est arrêté sur le poste.
 
 **IA :** elle a écrit le code issue par issue selon un plan que j'ai validé, avec deux pauses pour que je teste moi-même : pause 1 après le socle (backend démarré, trois onglets, **404 RESSOURCE_INTROUVABLE** au format imposé) et pause 2 après #3 (quatre requêtes Bruno 201, 409, 410, 400), menée en parallèle de la suite du développement. Vérification : **./mvnw clean verify** (34 tests) et **npm run build** avant chaque fusion ; le test unitaire RG1 a été vérifié en cassant volontairement la règle (il échoue alors, puis la règle est rétablie) ; collection Bruno exécutée en ligne de commande (5 requêtes sur 5, 9 assertions sur 9) ; parcours complet dans le navigateur sur des ports de test : session, présences, dépôt, relecture refusée à 12.5 puis acceptée à 14, tableau passé à 14/20.
+
+---
+
+## Étape 3 — Enveloppe
+
+**Retour de la pause 2 (fin de l'étape 2) :** tests Bruno validés : **201**, **409 DEJA_PRESENT**, **410 CODE_EXPIRE**, **400 CODE_INCONNU**. Un 409 inattendu venait d'un double envoi de ma part, confirmé par la Timeline de Bruno.
+
+**Fait :**
+- **Bug** (issue #26, créée avant tout code) : deux étudiants qui saisissent le code en même temps. Cause : la présence et l'attribution d'un relecteur aux exercices en attente partagent la même transaction ; deux présences simultanées créaient la même relecture, la contrainte **uk_relecture_exercice** annulait la seconde transaction, **présence comprise**, avec une erreur 500. Test concurrent poussé seul et rouge (**[201, 500, 500, 500]**, double envoi **[201, 500]**), puis correctif « Closes #26 » : verrou d'écriture sur la session (SELECT … FOR UPDATE). Test vert, relancé trois fois (PR #27).
+- **Changement de besoin** (issues #28 et #29) : deux relecteurs par exercice, note = moyenne des deux, provisoire si une seule est rendue. Analyse mise à jour avant le code, dans des commits qui le disent (CDC v2 : RG8 remplacée, RG22, RG23, EF15, section 7 ; diagrammes D1 à D4 v2) ; migration **V3** (nouvelle contrainte UNIQUE (exercice_id, relecteur_id), V1 et V2 intactes, données conservées) ; contrat : champ **moyenneProvisoire** ajouté au tableau. Deux branches, deux PR (#30, #31), séparées du correctif.
+
+**Bloqué :** environ 50 min au total pour l'étape (de 15h20 à 16h10), dont :
+- le test du bug devait être fiable : je l'ai fait tourner sur 5 tours de 4 présences simultanées avec 3 exercices en attente, pour qu'il échoue à coup sûr avant correction ;
+- la suppression de l'ancienne contrainte unique : la nouvelle est ajoutée avant, sinon la clé étrangère sur exercice_id perdait son index ;
+- mon test « V1, V2, V3 dans l'ordre » échouait à cause de la ligne sans version que Flyway écrit pour la création du schéma (filtrée) ;
+- deux nouvelles coupures réseau vers GitHub, rattrapées.
+
+**Ce que j'ai sorti du périmètre pour absorber le changement, et pourquoi :** toutes les EF **Should** et **Could** (EF9 à EF14, issues #9 à #14) sont **reportées après v1.0** et étiquetées « Reporté » sur GitHub. Le bug et le changement du client sont Must, et le temps restant sert à livrer la v1.0 et la soumission avant 18h. Le sacrifice le plus coûteux est la présence ajoutée à la main (#9) : il faut désormais trois présents pour qu'un exercice ait ses deux relecteurs ; un exercice incomplet reste « en attente » au tableau. Viennent ensuite la clôture (#10), sans laquelle une session n'est jamais figée, puis le confort (#11 à #14). Ordre de reprise s'il reste du temps : #9, puis #10.
+
+**IA :** elle a diagnostiqué la cause du bug en lisant le code, puis proposé le plan (issue, test rouge seul, correctif, évolution sur deux branches), que j'ai validé. J'ai tranché deux décisions : pas d'effet rétroactif (une note déjà rendue avec un seul relecteur reste définitive) et le report des Should/Could. Vérification : le test concurrent échoue avant le correctif et passe après (trois exécutions) ; **MigrationV3Test** applique V1, V2 puis V3 et retrouve les 4 relectures de démonstration (notes 15 et 12) ; 41 tests verts avec **./mvnw clean verify** ; contrat validé par le validateur OpenAPI ; diagrammes validés par l'analyseur Mermaid ; parcours réel sur des ports de test : après la note de Boris (14), tableau « 14.5/20 (provisoire) », après celle de Carine (17), « 15.25/20 » définitive.
