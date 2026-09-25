@@ -43,5 +43,7 @@ export type LigneTableau = {
   presences: number
   exercicesDeposes: number
   moyenne: number | null
+  /** Ajout de l'étape 3 (#29) : une note d'exercice n'a encore qu'une relecture sur deux. */
+  moyenneProvisoire: boolean
   relecturesEnAttente: number
 }
