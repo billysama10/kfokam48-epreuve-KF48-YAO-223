@@ -342,18 +342,98 @@ button:disabled {
   border-color: var(--gris-200);
 }
 
-/* ---------- Anciens écrans, remplacés écran par écran dans les commits suivants ---------- */
+/* ---------- En-tête, identité et onglets ---------- */
 
-nav {
+.entete {
   display: flex;
-  gap: var(--espace-2);
-  margin-bottom: var(--espace-4);
+  align-items: center;
+  gap: var(--espace-4);
 }
 
-button.actif {
-  background: var(--principale);
+.entete-logo {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
   color: var(--blanc);
+  background: var(--principale);
+  border-radius: var(--rayon);
 }
+
+.entete h1 {
+  font-size: 1.6rem;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.entete-sous-titre {
+  margin-top: var(--espace-1);
+  color: var(--gris-600);
+}
+
+.identite {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espace-3);
+  padding: var(--espace-4) var(--espace-5);
+}
+
+.identite-champs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--espace-4);
+}
+
+.onglets {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--espace-2);
+  padding: var(--espace-1);
+  background: var(--gris-100);
+  border: 1px solid var(--gris-200);
+  border-radius: var(--rayon);
+}
+
+.onglet {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: var(--espace-3) var(--espace-4);
+  text-align: left;
+  color: var(--gris-700);
+  background: transparent;
+  border-radius: var(--rayon-petit);
+}
+
+.onglet:hover:not(.onglet-actif) {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.onglet-libelle {
+  font-size: 1.05rem;
+}
+
+.onglet-aide {
+  font-size: 0.825rem;
+  font-weight: 400;
+  color: var(--gris-600);
+}
+
+.onglet-actif {
+  color: var(--principale);
+  background: var(--blanc);
+  border-color: var(--gris-200);
+  box-shadow: var(--ombre), inset 0 -3px 0 var(--principale);
+}
+
+.onglet-actif .onglet-aide {
+  color: var(--gris-700);
+}
+
+/* ---------- Anciens écrans, remplacés écran par écran dans les commits suivants ---------- */
 
 table {
   border-collapse: collapse;
