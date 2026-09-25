@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import fr.kfokam48.presences.domain.Relecture;
+import fr.kfokam48.presences.domain.StatutExercice;
 import fr.kfokam48.presences.dto.RelectureAttribueeDto;
 import fr.kfokam48.presences.dto.RendreRelectureRequete;
 import fr.kfokam48.presences.erreur.ApiException;
@@ -72,6 +73,11 @@ public class RelectureService {
         }
 
         relecture.rendre(note, requete.commentaire().trim(), LocalDateTime.now(horloge));
+        // D4 v2 : l'exercice n'est RELU qu'une fois ses deux relectures rendues (RG8, #28)
+        if (relectures.countByExerciceIdAndRendueAtIsNotNull(relecture.getExercice().getId())
+                >= AttributionService.RELECTEURS_PAR_EXERCICE) {
+            relecture.getExercice().changerStatut(StatutExercice.RELU);
+        }
         return RelectureAttribueeDto.de(relecture);
     }
 

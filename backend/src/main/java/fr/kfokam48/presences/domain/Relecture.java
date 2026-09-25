@@ -9,7 +9,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 
 /** Le relecteur est un étudiant dans un rôle (cahier des charges, section 2). */
 @Entity
@@ -19,7 +18,8 @@ public class Relecture {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    /** Deux relectures par exercice depuis V3 (RG8, #28). */
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "exercice_id")
     private Exercice exercice;
 
@@ -45,12 +45,11 @@ public class Relecture {
         return rendueAt != null;
     }
 
-    /** EF7 : la relecture rendue est définitive (RG11) et l'exercice passe à RELU (D4). */
+    /** EF7 : la relecture rendue est définitive (RG11) ; le passage à RELU dépend de la seconde (RelectureService). */
     public void rendre(int note, String commentaire, LocalDateTime maintenant) {
         this.note = note;
         this.commentaire = commentaire;
         this.rendueAt = maintenant;
-        exercice.changerStatut(StatutExercice.RELU);
     }
 
     public Long getId() { return id; }

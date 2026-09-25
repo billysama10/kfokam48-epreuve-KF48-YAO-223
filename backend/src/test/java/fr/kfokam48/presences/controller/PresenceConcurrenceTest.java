@@ -124,7 +124,7 @@ class PresenceConcurrenceTest {
                     session.getId())).as("présences enregistrées au tour %d", tour).isEqualTo(ETUDIANTS_SIMULTANES);
             assertThat(jdbc.queryForObject("select count(*) from relecture r join exercice x on r.exercice_id = x.id "
                     + "where x.session_id = ?", Long.class, session.getId()))
-                    .as("un relecteur par exercice au tour %d", tour).isEqualTo(EXERCICES_EN_ATTENTE);
+                    .as("deux relecteurs par exercice au tour %d (RG8 v2, #28)", tour).isEqualTo(2L * EXERCICES_EN_ATTENTE);
         }
     }
 

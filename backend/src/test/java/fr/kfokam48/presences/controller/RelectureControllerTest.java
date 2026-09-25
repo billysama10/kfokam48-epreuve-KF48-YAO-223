@@ -59,6 +59,8 @@ class RelectureControllerTest {
     private Long auteur;
     private Long relecteur;
     private Long autre;
+    private Long secondeRelectureId;
+    private Long david;
 
     @BeforeEach
     void donnees() {
@@ -74,6 +76,10 @@ class RelectureControllerTest {
         exercice.changerStatut(StatutExercice.EN_ATTENTE_RELECTURE);
         exerciceId = exercices.save(exercice).getId();
         relectureId = relectures.save(new Relecture(exercice, boris, maintenant)).getId();
+        // Second relecteur (RG8 v2, #28)
+        Etudiant d = etudiants.save(new Etudiant("David", promotion));
+        david = d.getId();
+        secondeRelectureId = relectures.save(new Relecture(exercice, d, maintenant)).getId();
     }
 
     private ResultActions rendre(Long appelant, String note) throws Exception {
@@ -84,12 +90,19 @@ class RelectureControllerTest {
     }
 
     @Test
-    void leRelecteurRendSaNote200EtLExercicePasseARelu() throws Exception {
+    void laPremiereNoteLaisseLExerciceEnAttenteLaSecondeLePasseARelu() throws Exception {
         rendre(relecteur, "15")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.rendue").value(true))
                 .andExpect(jsonPath("$.note").value(15));
+        assertThat(exercices.findById(exerciceId).orElseThrow().getStatut())
+                .isEqualTo(StatutExercice.EN_ATTENTE_RELECTURE);
 
+        mockMvc.perform(post("/api/relectures/" + secondeRelectureId)
+                        .header("X-Etudiant-Id", david)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"note\":12,\"commentaire\":\"Correct\"}"))
+                .andExpect(status().isOk());
         assertThat(exercices.findById(exerciceId).orElseThrow().getStatut()).isEqualTo(StatutExercice.RELU);
     }
 
