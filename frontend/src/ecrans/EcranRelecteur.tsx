@@ -2,8 +2,9 @@ import { listerRelectures } from '../api/relectures'
 import type { Etudiant } from '../api/types'
 import { useAppel } from '../api/useAppel'
 import { Chargement, MessageErreur } from '../composants/Etat'
+import { FormulaireRelecture } from './FormulaireRelecture'
 
-/** Écran relecteur (F2) : les exercices qui me sont attribués (EF6). */
+/** Écran relecteur (F2) : les exercices qui me sont attribués (EF6) et leur relecture (EF7). */
 export function EcranRelecteur({ etudiant }: { etudiant: Etudiant }) {
   const relectures = useAppel(() => listerRelectures(etudiant.id), [etudiant.id])
 
@@ -32,7 +33,7 @@ export function EcranRelecteur({ etudiant }: { etudiant: Etudiant }) {
               Rendue : {r.note}/20 — {r.commentaire}
             </p>
           ) : (
-            <p>À faire.</p>
+            <FormulaireRelecture relecture={r} relecteurId={etudiant.id} onRendue={relectures.recharger} />
           )}
         </article>
       ))}
