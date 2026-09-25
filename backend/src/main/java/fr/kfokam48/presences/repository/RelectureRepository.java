@@ -10,7 +10,9 @@ import fr.kfokam48.presences.domain.Relecture;
 
 public interface RelectureRepository extends JpaRepository<Relecture, Long> {
 
-    boolean existsByExerciceId(Long exerciceId);
+    List<Relecture> findByExerciceId(Long exerciceId);
+
+    long countByExerciceIdAndRendueAtIsNotNull(Long exerciceId);
 
     List<Relecture> findByRelecteurIdOrderByAttribueeAtDesc(Long relecteurId);
 

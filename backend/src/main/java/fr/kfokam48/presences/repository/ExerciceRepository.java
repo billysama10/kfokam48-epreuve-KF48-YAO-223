@@ -13,7 +13,7 @@ public interface ExerciceRepository extends JpaRepository<Exercice, Long> {
 
     boolean existsBySessionIdAndEtudiantId(Long sessionId, Long etudiantId);
 
-    List<Exercice> findBySessionIdAndStatut(Long sessionId, StatutExercice statut);
+    List<Exercice> findBySessionIdAndStatutIn(Long sessionId, List<StatutExercice> statuts);
 
     /** Tableau (EF8) : nombre d'exercices déposés par chaque étudiant de la promotion. */
     @Query("select x.etudiant.id, count(x) from Exercice x where x.etudiant.promotion.id = :promotionId group by x.etudiant.id")

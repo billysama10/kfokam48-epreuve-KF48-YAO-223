@@ -2,11 +2,13 @@ package fr.kfokam48.presences.service;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.random.RandomGenerator;
 import java.util.stream.Collectors;
 
@@ -22,9 +24,12 @@ import fr.kfokam48.presences.repository.ExerciceRepository;
 import fr.kfokam48.presences.repository.PresenceRepository;
 import fr.kfokam48.presences.repository.RelectureRepository;
 
-/** EF5 : attribution automatique d'un relecteur à chaque exercice déposé. */
+/** EF5 : attribution automatique de deux relecteurs à chaque exercice déposé (changement de besoin, #28). */
 @Service
 public class AttributionService {
+
+    /** RG8 : deux relecteurs différents par exercice (remplace « un seul relecteur », Q6). */
+    public static final int RELECTEURS_PAR_EXERCICE = 2;
 
     private final PresenceRepository presences;
     private final ExerciceRepository exercices;
@@ -42,40 +47,56 @@ public class AttributionService {
     }
 
     /**
-     * Tire un relecteur au hasard parmi les présents de la session (RG9), jamais l'auteur (RG2),
-     * en privilégiant les moins chargés. Sans candidat, l'exercice reste DEPOSE (RG10).
-     * Un exercice qui a déjà un relecteur n'en reçoit pas un second (RG8).
+     * Complète l'exercice jusqu'à deux relecteurs (RG8), tirés au hasard parmi les présents de la session
+     * (RG9), jamais l'auteur (RG2) ni un relecteur déjà attribué (RG22), les moins chargés d'abord.
+     * S'il manque des candidats, on attribue ce qui est possible ; le reste le sera à la prochaine présence (RG10).
      */
     @Transactional
-    public Optional<Relecture> attribuer(Exercice exercice) {
-        if (exercice.getStatut() != StatutExercice.DEPOSE || relectures.existsByExerciceId(exercice.getId())) {
-            return Optional.empty();
+    public List<Relecture> attribuer(Exercice exercice) {
+        if (exercice.getStatut() == StatutExercice.RELU) {
+            return List.of();
         }
+        List<Relecture> existantes = relectures.findByExerciceId(exercice.getId());
+        int manquants = RELECTEURS_PAR_EXERCICE - existantes.size();
+        if (manquants <= 0) {
+            return List.of();
+        }
+
+        Set<Long> exclus = new HashSet<>();
+        exclus.add(exercice.getEtudiant().getId());
+        existantes.forEach(r -> exclus.add(r.getRelecteur().getId()));
         Long sessionId = exercice.getSession().getId();
-        List<Etudiant> candidats = presences.findBySessionId(sessionId).stream()
+        List<Etudiant> candidats = new ArrayList<>(presences.findBySessionId(sessionId).stream()
                 .map(Presence::getEtudiant)
-                .filter(e -> !Objects.equals(e.getId(), exercice.getEtudiant().getId()))
-                .toList();
-        if (candidats.isEmpty()) {
-            return Optional.empty();
+                .filter(e -> !exclus.contains(e.getId()))
+                .toList());
+
+        List<Relecture> nouvelles = new ArrayList<>();
+        while (nouvelles.size() < manquants && !candidats.isEmpty()) {
+            Etudiant relecteur = tirerLeMoinsCharge(candidats, sessionId).orElseThrow();
+            candidats.remove(relecteur);
+            nouvelles.add(relectures.save(new Relecture(exercice, relecteur, LocalDateTime.now(horloge))));
         }
-
-        Map<Long, List<Etudiant>> parCharge = candidats.stream().collect(Collectors.groupingBy(
-                e -> relectures.countByRelecteurIdAndExerciceSessionId(e.getId(), sessionId)));
-        List<Etudiant> moinsCharges = parCharge.entrySet().stream()
-                .min(Comparator.comparing(Map.Entry::getKey))
-                .orElseThrow()
-                .getValue();
-        Etudiant relecteur = moinsCharges.get(hasard.nextInt(moinsCharges.size()));
-
-        Relecture relecture = relectures.save(new Relecture(exercice, relecteur, LocalDateTime.now(horloge)));
-        exercice.changerStatut(StatutExercice.EN_ATTENTE_RELECTURE);
-        return Optional.of(relecture);
+        if (!nouvelles.isEmpty() && exercice.getStatut() == StatutExercice.DEPOSE) {
+            exercice.changerStatut(StatutExercice.EN_ATTENTE_RELECTURE);
+        }
+        return nouvelles;
     }
 
-    /** RG10 : à chaque nouvelle présence, les exercices restés sans relecteur sont retentés. */
+    /** RG10 : à chaque nouvelle présence, les exercices qui n'ont pas encore leurs deux relecteurs sont complétés. */
     @Transactional
     public void attribuerEnAttente(Long sessionId) {
-        exercices.findBySessionIdAndStatut(sessionId, StatutExercice.DEPOSE).forEach(this::attribuer);
+        exercices.findBySessionIdAndStatutIn(sessionId,
+                List.of(StatutExercice.DEPOSE, StatutExercice.EN_ATTENTE_RELECTURE)).forEach(this::attribuer);
+    }
+
+    /** RG9 : au hasard parmi les candidats qui ont le moins de relectures dans la session. */
+    private Optional<Etudiant> tirerLeMoinsCharge(List<Etudiant> candidats, Long sessionId) {
+        Map<Long, List<Etudiant>> parCharge = candidats.stream().collect(Collectors.groupingBy(
+                e -> relectures.countByRelecteurIdAndExerciceSessionId(e.getId(), sessionId)));
+        return parCharge.entrySet().stream()
+                .min(Comparator.comparing(Map.Entry::getKey))
+                .map(Map.Entry::getValue)
+                .map(moinsCharges -> moinsCharges.get(hasard.nextInt(moinsCharges.size())));
     }
 }

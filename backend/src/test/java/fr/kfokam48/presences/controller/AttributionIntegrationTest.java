@@ -56,12 +56,14 @@ class AttributionIntegrationTest {
     private Long sessionId;
     private Long awa;
     private Long boris;
+    private Long carine;
 
     @BeforeEach
     void donnees() {
         Promotion promotion = promotions.save(new Promotion("Promo"));
         awa = etudiants.save(new Etudiant("Awa", promotion)).getId();
         boris = etudiants.save(new Etudiant("Boris", promotion)).getId();
+        carine = etudiants.save(new Etudiant("Carine", promotion)).getId();
         sessionId = sessions.save(new SessionCours("Cours", promotion, "ATTR01",
                 LocalDateTime.now(ZoneOffset.UTC))).getId();
     }
@@ -78,7 +80,7 @@ class AttributionIntegrationTest {
     }
 
     @Test
-    void unAutrePresentEstAttribueDesLeDepot() throws Exception {
+    void unAutrePresentEstAttribueDesLeDepotPuisLeSecondALaPresenceSuivante() throws Exception {
         presence(awa).andExpect(status().isCreated());
         presence(boris).andExpect(status().isCreated());
 
@@ -87,6 +89,11 @@ class AttributionIntegrationTest {
 
         Relecture relecture = relectures.findAll().get(0);
         assertThat(relecture.getRelecteur().getId()).isEqualTo(boris);
+
+        // Deux relecteurs (RG8 v2, #28) : Carine arrive et complète l'exercice
+        presence(carine).andExpect(status().isCreated());
+        assertThat(relectures.findAll()).extracting(r -> r.getRelecteur().getId())
+                .containsExactlyInAnyOrder(boris, carine);
     }
 
     @Test
