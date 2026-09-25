@@ -140,6 +140,8 @@ a {
   display: flex;
   flex-direction: column;
   gap: var(--espace-1);
+  /* un long libellé d'option ne doit pas élargir la grille */
+  min-width: 0;
 }
 
 .champ label {
@@ -470,8 +472,16 @@ button:disabled {
 }
 
 .tableau-defile {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   border: 1px solid var(--gris-200);
   border-radius: var(--rayon-petit);
+}
+
+.aide-defilement {
+  display: none;
+  font-size: 0.85rem;
+  color: var(--gris-600);
 }
 
 .tableau {
@@ -648,4 +658,116 @@ button:disabled {
   font-weight: 700;
   color: var(--vert);
   font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Responsive : tablette puis téléphone (360 px) ---------- */
+
+@media (max-width: 760px) {
+  .page {
+    padding: var(--espace-5) var(--espace-4) var(--espace-6);
+  }
+
+  .pile {
+    gap: var(--espace-4);
+  }
+
+  .grille-deux,
+  .identite-champs {
+    grid-template-columns: 1fr;
+    gap: var(--espace-4);
+  }
+
+  .onglets {
+    grid-template-columns: 1fr;
+    gap: var(--espace-1);
+  }
+
+  .onglet {
+    padding: var(--espace-2) var(--espace-3);
+  }
+
+  .carte,
+  .identite {
+    padding: var(--espace-4);
+  }
+
+  .carte-entete,
+  .entete-section {
+    flex-wrap: wrap;
+  }
+
+  .aide-defilement {
+    display: block;
+  }
+
+  /* La colonne des noms reste visible quand le tableau défile */
+  .tableau th:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: var(--blanc);
+    box-shadow: inset -1px 0 0 var(--gris-200);
+  }
+
+  .tableau thead th:first-child {
+    background: var(--gris-700);
+  }
+
+  .tableau tbody tr:nth-child(even) th:first-child {
+    background: var(--gris-50);
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 0.975rem;
+  }
+
+  .entete {
+    align-items: flex-start;
+    gap: var(--espace-3);
+  }
+
+  .entete-logo {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 0.9rem;
+  }
+
+  .entete h1 {
+    font-size: 1.3rem;
+  }
+
+  .entete-sous-titre {
+    font-size: 0.925rem;
+  }
+
+  /* Boutons pleine largeur, plus faciles à toucher */
+  .bouton-principal {
+    align-self: stretch;
+    padding: var(--espace-3) var(--espace-4);
+  }
+
+  .actions .bouton-principal {
+    flex: 1 1 100%;
+  }
+
+  .saisie-code {
+    font-size: 1.6rem;
+    letter-spacing: 0.25em;
+  }
+
+  .code-session {
+    padding: var(--espace-4) var(--espace-3);
+  }
+
+  .tableau th,
+  .tableau td {
+    padding: var(--espace-2) var(--espace-3);
+  }
+
+  .relecture-rendue {
+    flex-direction: column;
+    gap: var(--espace-1);
+  }
 }

@@ -28,6 +28,7 @@ export function Tableau({ promotion }: { promotion: Promotion }) {
         {tableau.donnees?.length === 0 && <EtatVide>Aucun étudiant dans cette promotion.</EtatVide>}
         {tableau.donnees && tableau.donnees.length > 0 && (
           <>
+            <p className="aide-defilement">Faites glisser le tableau vers la gauche pour voir toutes les colonnes.</p>
             <div className="tableau-defile">
               <table className="tableau">
                 <thead>
