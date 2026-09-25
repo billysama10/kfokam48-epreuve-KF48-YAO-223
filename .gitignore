@@ -19,3 +19,5 @@ Thumbs.db
 .env.*
 *.db
 data/
+# Traces des tests navigateur
+.playwright-mcp/

@@ -6,7 +6,8 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/api': 'http://localhost:8080',
+      // Cible modifiable (API_CIBLE) pour tester sur un autre port.
+      '/api': process.env.API_CIBLE ?? 'http://localhost:8080',
     },
   },
 })
