@@ -3,6 +3,7 @@ package fr.kfokam48.presences.service;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +12,7 @@ import fr.kfokam48.presences.domain.Promotion;
 import fr.kfokam48.presences.domain.SessionCours;
 import fr.kfokam48.presences.dto.OuvrirSessionRequete;
 import fr.kfokam48.presences.dto.SessionOuverteDto;
+import fr.kfokam48.presences.dto.SessionResumeDto;
 import fr.kfokam48.presences.erreur.ApiException;
 import fr.kfokam48.presences.repository.PromotionRepository;
 import fr.kfokam48.presences.repository.SessionCoursRepository;
@@ -42,6 +44,18 @@ public class SessionService {
         LocalDateTime maintenant = LocalDateTime.now(horloge).truncatedTo(ChronoUnit.SECONDS);
         SessionCours session = new SessionCours(requete.titre().trim(), promotion, codeLibre(), maintenant);
         return SessionOuverteDto.de(sessions.save(session));
+    }
+
+    /** Sessions d'une promotion, la plus récente en premier (EF4 : choix de la session du dépôt). */
+    @Transactional(readOnly = true)
+    public List<SessionResumeDto> listerParPromotion(Long promotionId) {
+        if (!promotions.existsById(promotionId)) {
+            throw ApiException.introuvable("PROMOTION_INCONNUE", "Cette promotion n'existe pas.");
+        }
+        LocalDateTime maintenant = LocalDateTime.now(horloge);
+        return sessions.findByPromotionIdOrderByOuvertureAtDesc(promotionId).stream()
+                .map(s -> SessionResumeDto.de(s, maintenant))
+                .toList();
     }
 
     /** Le code est unique pour toutes les sessions (contrainte UNIQUE de V1). */
