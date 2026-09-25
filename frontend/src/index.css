@@ -433,23 +433,108 @@ button:disabled {
   color: var(--gris-700);
 }
 
-/* ---------- Anciens écrans, remplacés écran par écran dans les commits suivants ---------- */
+/* ---------- Écran Formateur ---------- */
 
-table {
-  border-collapse: collapse;
+.code-session {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--espace-2);
+  padding: var(--espace-5) var(--espace-4);
+  text-align: center;
+  background: var(--principale-clair);
+  border: 2px dashed var(--principale);
+  border-radius: var(--rayon);
+}
+
+.code-session-libelle {
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--principale);
+}
+
+.code-session-valeur {
+  font-family: var(--police-code);
+  font-size: clamp(2.5rem, 9vw, 4.5rem);
+  line-height: 1.1;
+  letter-spacing: 0.18em;
+  /* compense l'espacement après la dernière lettre pour garder le code centré */
+  margin-right: -0.18em;
+  color: var(--gris-900);
+}
+
+.code-session-expiration {
+  color: var(--gris-700);
+}
+
+.tableau-defile {
+  border: 1px solid var(--gris-200);
+  border-radius: var(--rayon-petit);
+}
+
+.tableau {
   width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
 }
 
-th,
-td {
-  border: 1px solid var(--gris-300);
-  padding: 0.3rem 0.5rem;
+.tableau th,
+.tableau td {
+  padding: var(--espace-3) var(--espace-4);
   text-align: left;
+  vertical-align: middle;
+  white-space: nowrap;
 }
 
-.erreur {
-  color: var(--rouge);
+.tableau thead th {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--blanc);
+  background: var(--gris-700);
 }
+
+.tableau tbody th {
+  font-weight: 600;
+}
+
+.tableau tbody tr:nth-child(even) {
+  background: var(--gris-50);
+}
+
+.tableau tbody tr + tr {
+  border-top: 1px solid var(--gris-100);
+}
+
+.tableau .nombre {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.cellule-moyenne {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espace-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.tiret {
+  color: var(--gris-500);
+}
+
+.legende {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espace-2);
+  font-size: 0.85rem;
+  color: var(--gris-600);
+}
+
+/* ---------- Anciens écrans, remplacés écran par écran dans les commits suivants ---------- */
 
 .succes {
   color: var(--vert);
@@ -460,14 +545,4 @@ td {
   padding: 0.5rem 1rem;
   margin-bottom: 0.5rem;
   overflow-wrap: anywhere;
-}
-
-.attente {
-  font-weight: bold;
-  color: var(--orange);
-}
-
-.code {
-  font-size: 2rem;
-  letter-spacing: 0.2em;
 }
