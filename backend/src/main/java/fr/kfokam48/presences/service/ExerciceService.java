@@ -45,7 +45,8 @@ public class ExerciceService {
             throw ApiException.requeteInvalide("LIEN_INVALIDE", "Le lien doit être une adresse http ou https valide.");
         }
         // Opération imposée : seuls 400 et 409 sont prévus, un identifiant inconnu est donc un 400
-        SessionCours session = sessions.findById(requete.sessionId())
+        // Bug #26 : même verrou que les présences, l'attribution ne peut pas se croiser
+        SessionCours session = sessions.verrouillerParId(requete.sessionId())
                 .orElseThrow(() -> ApiException.requeteInvalide("SESSION_INCONNUE", "Cette session n'existe pas."));
         Etudiant etudiant = etudiants.findById(requete.etudiantId())
                 .orElseThrow(() -> ApiException.requeteInvalide("ETUDIANT_INCONNU", "Cet étudiant n'existe pas."));
