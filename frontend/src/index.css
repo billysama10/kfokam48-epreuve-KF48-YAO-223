@@ -563,15 +563,89 @@ button:disabled {
   font-weight: 400;
 }
 
-/* ---------- Anciens écrans, remplacés écran par écran dans les commits suivants ---------- */
+/* ---------- Écran Relecteur ---------- */
 
-.succes {
-  color: var(--vert);
+.entete-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--espace-4);
 }
 
-.relecture {
-  border: 1px solid var(--gris-300);
-  padding: 0.5rem 1rem;
-  margin-bottom: 0.5rem;
+.titre-liste {
+  display: flex;
+  align-items: center;
+  gap: var(--espace-2);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--gris-600);
+}
+
+.carte-relecture {
+  border-left: 4px solid var(--principale);
+}
+
+.carte-rendue {
+  border-left-color: var(--vert);
+  background: var(--gris-50);
+  box-shadow: none;
+}
+
+.lien-exercice {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: var(--espace-3) var(--espace-4);
+  text-decoration: none;
+  background: var(--principale-clair);
+  border-radius: var(--rayon-petit);
+}
+
+.lien-exercice:hover .lien-exercice-url {
+  text-decoration: underline;
+}
+
+.lien-exercice-libelle {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--gris-600);
+}
+
+.lien-exercice-url {
+  font-weight: 600;
   overflow-wrap: anywhere;
+}
+
+.saisie-note {
+  max-width: 9rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espace-3);
+}
+
+.relecture-rendue {
+  display: flex;
+  align-items: baseline;
+  gap: var(--espace-4);
+  overflow-wrap: anywhere;
+}
+
+.relecture-rendue p {
+  color: var(--gris-700);
+}
+
+.relecture-note {
+  flex: none;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--vert);
+  font-variant-numeric: tabular-nums;
 }
